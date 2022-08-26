@@ -1,0 +1,1 @@
+python train.py --dataroot ./datasets/membrane --name ccm_stillgan --model cycle_gan --pool_size 1 --no_dropout --input_nc 1 --output_nc 1
