@@ -12,7 +12,7 @@ opt.display_id = -1   # no visdom display; the test code saves the results to a 
 model = create_model(opt)      # create a model given opt.model and other options
 model.setup(opt)  # 加载之前训练好的参数
 start_time = time.time()
-model.get_input()
-model.forward2()
+model.set_input()
+model.forward()
 total_time = time.time()-start_time
 print(total_time)

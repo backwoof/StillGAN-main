@@ -142,6 +142,8 @@ class CycleGANModel(BaseModel):
         self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
         self.fake_A = self.netG_B(self.real_B)  # G_B(B)
         self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
+        save_image(self.real_A, './datasets/membrane/testA/real.png')
+        save_image(self.fake_B, './datasets/membrane/testA/fake.png')
 
     # 新加的
     def get_input(self):

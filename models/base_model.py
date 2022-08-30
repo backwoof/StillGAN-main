@@ -109,7 +109,7 @@ class BaseModel(ABC):
         It also calls <compute_visuals> to produce additional visualization results
         """
         with torch.no_grad():
-            self.forward2()
+            self.forward()
             # self.compute_visuals()
 
     def compute_visuals(self):

@@ -1,5 +1,8 @@
 # -*- coding: utf-8 -*-
+from PIL import Image
+from torchvision.utils import save_image
 
+from data.base_dataset import get_transform
 from .base_model import BaseModel
 from . import networks
 
@@ -51,7 +54,7 @@ class TestModel(BaseModel):
         # please see <BaseModel.load_networks>
         setattr(self, 'netG' + opt.model_suffix, self.netG)  # store netG in self.
 
-    def set_input(self, input):
+    def set_input(self):  # 之前有参数input
         """Unpack input data from the dataloader and perform necessary pre-processing steps.
 
         Parameters:
@@ -59,12 +62,18 @@ class TestModel(BaseModel):
 
         We need to use 'single_dataset' dataset mode. It only load images from one domain.
         """
-        self.real = input['A'].to(self.device)
-        self.image_paths = input['A_paths']
+        # self.real = input['A'].to(self.device)
+        # self.image_paths = input['A_paths']
+
+        path = './datasets/membrane/testA/0.png'
+        transform_A = get_transform(self.opt, grayscale=False)
+        self.real_A = transform_A(Image.open(path).convert('RGB'))
 
     def forward(self):
         """Run forward pass."""
-        self.fake = self.netG(self.real)  # G(real)
+        # self.fake = self.netG(self.real)  # G(real)
+        self.fake = self.netG(self.real_A)  # G_A(A)
+        save_image(self.fake, './datasets/membrane/testA/0_G.png')
 
     def optimize_parameters(self):
         """No optimization for test model."""
