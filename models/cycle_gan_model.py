@@ -1,10 +1,15 @@
 # -*- coding: utf-8 -*-
+import os
 
 import torch
 import itertools
+
+from data.base_dataset import get_transform
 from util.image_pool import ImagePool
 from .base_model import BaseModel
 from . import networks
+from PIL import Image
+from torchvision.utils import save_image
 
 
 class CycleGANModel(BaseModel):
@@ -137,6 +142,18 @@ class CycleGANModel(BaseModel):
         self.rec_A = self.netG_B(self.fake_B)   # G_B(G_A(A))
         self.fake_A = self.netG_B(self.real_B)  # G_B(B)
         self.rec_B = self.netG_A(self.fake_A)   # G_A(G_B(B))
+
+    # 新加的
+    def get_input(self):
+        path = './datasets/membrane/testA/0.png'
+        transform_A = get_transform(self.opt, grayscale=False)
+        self.real_A = transform_A(Image.open(path).convert('RGB'))
+
+    #  新加的，测试专用
+    def forward2(self):
+        self.fake_B = self.netG_A(self.real_A)  # G_A(A)
+        save_image(self.fake_B, './datasets/membrane/testA/0_G.png')
+
 
     def backward_D_basic(self, netD, real, fake):
         """Calculate GAN loss for the discriminator

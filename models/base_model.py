@@ -73,6 +73,11 @@ class BaseModel(ABC):
         pass
 
     @abstractmethod
+    def forward2(self):
+        """Run forward pass; called by both functions <optimize_parameters> and <test>."""
+        pass
+
+    @abstractmethod
     def optimize_parameters(self):
         """Calculate losses, gradients, and update network weights; called in every training iteration"""
         pass
@@ -85,9 +90,9 @@ class BaseModel(ABC):
         """
         if self.isTrain:
             self.schedulers = [networks.get_scheduler(optimizer, opt) for optimizer in self.optimizers]
-        if not self.isTrain or opt.continue_train:
+        if not self.isTrain or opt.continue_train:  # 测试时，加载模型即可
             load_suffix = 'iter_%d' % opt.load_iter if opt.load_iter > 0 else opt.epoch
-            self.load_networks(load_suffix)
+            self.load_networks(load_suffix)  # 加载训练好的模型
         self.print_networks(opt.verbose)
 
     def eval(self):
@@ -104,8 +109,8 @@ class BaseModel(ABC):
         It also calls <compute_visuals> to produce additional visualization results
         """
         with torch.no_grad():
-            self.forward()
-            self.compute_visuals()
+            self.forward2()
+            # self.compute_visuals()
 
     def compute_visuals(self):
         """Calculate additional output images for visdom and HTML visualization"""
@@ -191,7 +196,7 @@ class BaseModel(ABC):
                 print('loading the model from %s' % load_path)
                 # if you are using PyTorch newer than 0.4 (e.g., built from
                 # GitHub source), you can remove str() on self.device
-                state_dict = torch.load(load_path, map_location=str(self.device))
+                state_dict = torch.load(load_path, map_location=str(self.device))  # 加载进GPU
                 if hasattr(state_dict, '_metadata'):
                     del state_dict._metadata
 
